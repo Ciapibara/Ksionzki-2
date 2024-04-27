@@ -2,9 +2,7 @@
 {
   internal interface ILendable
   {
-    void Borrow();
-
-    void Return();
+    void BorrowOrReturn();
   }
 
   /* Ta klasa miala by znacznie wiecej sensu, gdyby tych rzeczy do wypozyczenia bylo wiecej.
@@ -16,11 +14,7 @@
     public string? Name { get; set; } = name;
     public bool Available { get; set; } = available;
 
-    public void Borrow() =>
-      Available = false;
-
-    public void Return() =>
-      Available = true;
+    public void BorrowOrReturn() => Available = Available ? false : true;
   }
 
   internal class Book(int id, string name, bool available, int pageCount) : Lendable(id, name, available)

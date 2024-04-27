@@ -4,11 +4,11 @@ Console.CursorVisible = false;
 
 StartMenu();
 
-void StartMenu(string? msg = null)
+void StartMenu(string? msg = null, ConsoleColor color = ConsoleColor.White)
 {
   int Choice = 0;
   bool ChoiceMade = false;
-  string[] Options = new[] { "Pokaz wszystkie książki", "Dodaj nową książke" };
+  string[] Options = ["Pokaz wszystkie książki", "Dodaj nową książke"];
 
   while (!ChoiceMade)
   {
@@ -16,17 +16,13 @@ void StartMenu(string? msg = null)
 
     if (msg != null)
     {
+      Console.ForegroundColor = color;
       Console.WriteLine(msg);
       Console.ResetColor();
     }
-
-    for (int i = 0; i < Options.Length; i++)
-    {
-      Console.WriteLine($"{(Choice == i ? ">" : " ")} {Options[i]}");
-    }
+    ShowOptions(Options, Choice);
 
     ConsoleKeyInfo key = Console.ReadKey(false);
-
     switch (key.Key)
     {
       case ConsoleKey.UpArrow:
@@ -46,6 +42,7 @@ void StartMenu(string? msg = null)
         break;
     }
   }
+
   if (ChoiceMade)
   {
     switch (Choice)
@@ -65,14 +62,9 @@ void StartMenu(string? msg = null)
     Books.ShowAll();
 
     if (int.TryParse(Console.ReadLine(), out int bookId))
-    {
       BookMenu(bookId);
-    }
     else
-    {
-      Console.ForegroundColor = ConsoleColor.Red;
-      StartMenu("Podaj poprawne id");
-    }
+      StartMenu("Podaj poprawne id", ConsoleColor.Red);
   }
 
   void AddBook()
@@ -81,50 +73,38 @@ void StartMenu(string? msg = null)
     string name = Console.ReadLine();
 
     Console.WriteLine("Podaj ilosc stron");
-    string pagesString = Console.ReadLine();
+    string? pagesString = Console.ReadLine();
 
     if (int.TryParse(pagesString, out int pagesCount))
     {
       Books.Add(name, true, pagesCount);
-      Console.ForegroundColor = ConsoleColor.Green;
-      StartMenu($"Dodano {name}");
+      StartMenu($"Dodano {name}", ConsoleColor.Green);
     }
     else
-    {
-      Console.ForegroundColor = ConsoleColor.Red;
-      StartMenu("Dodawanie ksiazki nie powiodło się!");
-    }
+      StartMenu("Dodawanie ksiazki nie powiodło się!", ConsoleColor.Red);
   }
 }
 
 void BookMenu(int bookId)
 {
-  Book b = Books.FindById(bookId);
+  Book? b = Books.FindById(bookId);
 
   if (b == null)
-  {
-    Console.ForegroundColor = ConsoleColor.Red;
-    StartMenu("Podana ksiazka nie istnieje!");
-  }
+    StartMenu("Podana ksiazka nie istnieje!", ConsoleColor.Red);
 
   int Choice = 0;
   bool ChoiceMade = false;
   string action = b.Available ? "Wypozycz" : "Zwroc";
-  string[] Options = new[] { "Usun książke", action };
+  string[] Options = ["Usun książke", action];
 
   while (!ChoiceMade)
   {
     Console.Clear();
 
-    Books.Show(bookId);
-
-    for (int i = 0; i < Options.Length; i++)
-    {
-      Console.WriteLine($"{(Choice == i ? ">" : " ")} {Options[i]}");
-    }
+    b.Show();
+    ShowOptions(Options, Choice);
 
     ConsoleKeyInfo key = Console.ReadKey(false);
-
     switch (key.Key)
     {
       case ConsoleKey.UpArrow:
@@ -144,6 +124,7 @@ void BookMenu(int bookId)
         break;
     }
   }
+
   if (ChoiceMade)
   {
     switch (Choice)
@@ -160,20 +141,21 @@ void BookMenu(int bookId)
 
   void RemoveBook()
   {
-    Book bookToRemove = Books.FindById(bookId);
-
-    Books.Remove(bookToRemove.Id);
-    Console.ForegroundColor = ConsoleColor.Red;
-    StartMenu($"Usunieto {bookToRemove.Name}");
+    Books.Remove(b);
+    StartMenu($"Usunieto {b.Name}", ConsoleColor.Red);
   }
 
   void BorrowOrReturn()
   {
-    if (b.Available)
-      b.Borrow();
-    else
-      b.Return();
-
+    b.BorrowOrReturn();
     BookMenu(bookId);
+  }
+}
+
+void ShowOptions(string[] options, int choice)
+{
+  for (int i = 0; i < options.Length; i++)
+  {
+    Console.WriteLine($"{(choice == i ? ">" : " ")} {options[i]}");
   }
 }
