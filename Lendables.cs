@@ -25,6 +25,7 @@
     {
       Console.WriteLine($"Title: {Name}");
       Console.WriteLine($"Available: {Available}");
+      Console.WriteLine($"Pages: {PageCount}");
       Console.WriteLine();
     }
   }
