@@ -16,6 +16,7 @@ void StartMenu(string? msg = null, ConsoleColor color = ConsoleColor.White)
 
     if (msg != null)
     {
+   
       Console.ForegroundColor = color;
       Console.WriteLine(msg);
       Console.ResetColor();
@@ -26,6 +27,8 @@ void StartMenu(string? msg = null, ConsoleColor color = ConsoleColor.White)
     switch (key.Key)
     {
       case ConsoleKey.UpArrow:
+
+               
         Choice = Choice == 0 ? Options.Length - 1 : Choice - 1;
         break;
 
@@ -60,6 +63,11 @@ void StartMenu(string? msg = null, ConsoleColor color = ConsoleColor.White)
   void ShowAllBooks()
   {
     Books.ShowAll();
+
+    ConsoleKeyInfo key = Console.ReadKey();
+        if (key.Key == ConsoleKey.Escape)
+            StartMenu();
+        
 
     if (int.TryParse(Console.ReadLine(), out int bookId))
       BookMenu(bookId);
@@ -154,8 +162,12 @@ void BookMenu(int bookId)
 
 void ShowOptions(string[] options, int choice)
 {
+
   for (int i = 0; i < options.Length; i++)
   {
+    if (choice == i)
+      Console.ForegroundColor = ConsoleColor.Cyan;
     Console.WriteLine($"{(choice == i ? ">" : " ")} {options[i]}");
+    Console.ResetColor();
   }
 }

@@ -13,7 +13,7 @@ namespace Biblioteka
       if (File.Exists(jsonPath))
       {
         books = JsonSerializer.Deserialize<List<Book>>(File.ReadAllText(jsonPath));
-        nextId = books.Count + 1;
+        nextId = books.Count > 0 ? nextId = books.Count + 1 : 1;
       }
       else
         File.Create(jsonPath).Close();
@@ -21,16 +21,23 @@ namespace Biblioteka
 
     public static void Add(string name, bool available, int pagesCount)
     {
-      Book bookToAdd = new Book(nextId++, name, available, pagesCount);
+      Book bookToAdd = new(nextId++, name, available, pagesCount);
       books?.Add(bookToAdd);
+
+      NormaizeIds();
       SaveData();
     }
 
     public static void Remove(Book bookToRemove)
     {
       books?.Remove(bookToRemove);
-      books?.ForEach(b => b.Id = books.IndexOf(b) + 1); // Normalize IDs
+
+      NormaizeIds();
       SaveData();
+    }
+    public static void NormaizeIds()
+    {
+      books?.ForEach(b => b.Id = books.IndexOf(b) + 1);
     }
 
     public static void ShowAll()
@@ -44,10 +51,13 @@ namespace Biblioteka
 
     public static Book? FindById(int id)
     {
-      Book b = books.FirstOrDefault(b => b.Id == id);
-      return b;
+      return books.FirstOrDefault(b => b.Id == id);
     }
 
-    private static void SaveData() => File.WriteAllText(jsonPath, JsonSerializer.Serialize(books));
+    private static void SaveData() 
+    {
+      File.WriteAllText(jsonPath, JsonSerializer.Serialize(books));
+    }
+
   }
 }

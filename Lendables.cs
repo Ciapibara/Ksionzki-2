@@ -5,16 +5,13 @@
     void BorrowOrReturn();
   }
 
-  /* Ta klasa miala by znacznie wiecej sensu, gdyby tych rzeczy do wypozyczenia bylo wiecej.
-  Mialem je dodac w trakcie, ale nie chcialem robic z tego wiekszego spaghetti niz aktualnie jest */
-
   internal class Lendable(int id, string name, bool available) : ILendable
   {
-    public int Id { get; set; } = id;
-    public string? Name { get; set; } = name;
+    public int Id { get; set;  } = id;
+    public string? Name { get; } = name;
     public bool Available { get; set; } = available;
 
-    public void BorrowOrReturn() => Available = Available ? false : true;
+    public void BorrowOrReturn() => Available = !Available;
   }
 
   internal class Book(int id, string name, bool available, int pageCount) : Lendable(id, name, available)
